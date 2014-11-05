@@ -102,9 +102,9 @@ module Fluent
       new_tag = @placeholder_expander.expand(tag)
 
       new_record = @renew_record ? {} : record.dup
-      @keep_keys.each {|k| new_record[k] = record[k]} if @keep_keys and @renew_record
+      @keep_keys.each {|k| new_record[k] = record[k.respond_to?(:to_sym) ? k.to_sym : k]} if @keep_keys and @renew_record
       @map.each_pair {|k, v| new_record[k] = @placeholder_expander.expand(v) }
-      @remove_keys.each {|k| new_record.delete(k) } if @remove_keys
+      @remove_keys.each {|k| new_record.delete(k.respond_to?(:to_sym) ? k.to_sym : k) } if @remove_keys
 
       [new_tag, new_record]
     end
