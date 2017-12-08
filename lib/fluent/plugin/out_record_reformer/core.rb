@@ -106,7 +106,7 @@ module Fluent
           if @renew_time_key && new_record.has_key?(@renew_time_key)
             time = new_record[@renew_time_key].to_i
           end
-          @remove_keys.each {|k| new_record.delete(k) } if @remove_keys
+          @remove_keys.each {|k| new_record.delete(new_record.has_key?(k) ? k : k.to_sym) } if @remove_keys
           router.emit(new_tag, time, new_record)
         end
       }
@@ -134,7 +134,7 @@ module Fluent
       new_tag = expand_placeholders(tag, placeholders)
 
       new_record = @renew_record ? {} : record.dup
-      @keep_keys.each {|k| new_record[k] = record[k]} if @keep_keys and @renew_record
+      @keep_keys.each {|k| new_record[k] = record[record.has_key?(k) ? k : k.to_sym]} if @keep_keys and @renew_record
       new_record.merge!(expand_placeholders(@map, placeholders))
 
       [new_tag, new_record]
